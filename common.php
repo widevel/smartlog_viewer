@@ -7,12 +7,53 @@ $filter_date_from = Widevel\SmartlogViewer\Filter::getValue('date_from');
 $filter_date_to = Widevel\SmartlogViewer\Filter::getValue('date_to');
 $filter_view_type = Widevel\SmartlogViewer\Filter::getValue('view_type');
 $filter_sort = Widevel\SmartlogViewer\Filter::getValue('sort');
+$filter_page = Widevel\SmartlogViewer\Filter::getValue('page');
+$filter_session_token = Widevel\SmartlogViewer\Filter::getValue('session_token');
+$filter_instance_token = Widevel\SmartlogViewer\Filter::getValue('instance_token');
 
 $mongo_client = new MongoDB\Client;
 
-if($filter_view_type === 'session') {
-	$sessions_fetch = $mongo_client->smartlog->session->find();
-	
-	//print_r($sessions_fetch);
+
+$pagination = new Widevel\SmartlogViewer\Pagination($filter_limit, $filter_page);
+
+
+$include_file_name = __DIR__ . '/data_view/' . $filter_view_type . '.php';
+
+$where = [];
+
+if($filter_session_token) {
+	$where['session_token'] = $filter_session_token;
 }
+
+if($filter_instance_token) {
+	$where['instance_token'] = $filter_instance_token;
+}
+
+if($filter_date_from) {
+	$where['date'] = ['$gte' => new \MongoDB\BSON\UTCDateTime(strtotime($filter_date_from) * 1000)];
+}
+
+if($filter_date_to) {
+	$where_date_to = ['$lte' => new \MongoDB\BSON\UTCDateTime(strtotime($filter_date_to) * 1000)];
+	if(array_key_exists('date', $where)) {
+		$where['date'] = array_merge($where['date'], $where_date_to);
+	} else {
+		$where['date'] = $where_date_to;
+	}
+}
+
+$options = [
+	'skip' => $pagination->getMongoSkip(),
+	'limit' => $filter_limit,
+	'sort' => ['_id' => ($filter_sort == 'asc' ? 1 : -1)]
+];
+
+$count = $mongo_client->smartlog->$filter_view_type->count($where);
+
+$iterator = $mongo_client->smartlog->$filter_view_type->find($where, $options);
+
+$pagination->setCount($count);
+
+
+
 

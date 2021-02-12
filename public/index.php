@@ -14,6 +14,9 @@ require_once 'common.php';
 <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
 <link href="css/shop-item.css" rel="stylesheet">
+<script defer src="node_modules/@fortawesome/fontawesome-free/js/brands.js"></script>
+<script defer src="node_modules/@fortawesome/fontawesome-free/js/solid.js"></script>
+<script defer src="node_modules/@fortawesome/fontawesome-free/js/fontawesome.js"></script>
 </head>
 <body>
 <!-- Navigation -->
@@ -34,65 +37,84 @@ require_once 'common.php';
 </div>
 </nav>
 <!-- Page Content -->
-<div class="container">
-	<div class="row">
-		<div class="col-lg-12 m-4">
-			<h3 class="mb-4">Logs:</h3>
-			<div class="card mb-4" style="width: 100%;">
-				<div class="card-body">
-					<form class="form-inline">
-						<select class="form-control mr-4" name="limit">
-							<?php foreach(Widevel\SmartlogViewer\Filter::LIMIT_VALUES as $limit) { ?>
-							<option <?=$limit === $filter_limit ? 'selected' : ''?>><?=$limit?></option>
-							<?php } ?>
-						</select>
-						<div class="form-group mr-4">
-							<input type="datetime-local" class="form-control" name="date_from" value="<?=$filter_date_from?>">
+<form method="GET">
+<input type="hidden" name="page" value="<?=$filter_page?>" />
+<input type="hidden" name="session_token" value="<?=$filter_session_token?>" />
+<input type="hidden" name="instance_token" value="<?=$filter_instance_token?>" />
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 m-4">
+				<h3 class="mb-4">Logs:</h3>
+				<div class="card mb-4" style="width: 100%;">
+					<div class="card-body">
+						<div class="form-inline">
+							<select class="form-control mr-4" name="limit">
+								<?php foreach(Widevel\SmartlogViewer\Filter::LIMIT_VALUES as $limit) { ?>
+								<option <?=$limit === $filter_limit ? 'selected' : ''?>><?=$limit?></option>
+								<?php } ?>
+							</select>
+							<div class="form-group mr-4">
+								<input type="datetime-local" class="form-control" name="date_from" value="<?=$filter_date_from?>">
+							</div>
+							<div class="form-group mr-4">
+								<input type="datetime-local" class="form-control" name="date_to" value="<?=$filter_date_to?>">
+							</div>
 						</div>
-						<div class="form-group mr-4">
-							<input type="datetime-local" class="form-control" name="date_to" value="<?=$filter_date_to?>">
-						</div>
-					</form>
-					
-				</div>
-			</div>
-			<div class="card mb-4" style="width: 100%;">
-				<div class="card-body">
-					<form class="form-inline">
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="view_type" value="session" id="view_type_session" <?=$filter_view_type === 'session' ? 'checked' : ''?>>
-							<label class="form-check-label" for="view_type_session">Session</label>
-						</div>
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="view_type" value="instance" id="view_type_instance" <?=$filter_view_type === 'instance' ? 'checked' : ''?>>
-							<label class="form-check-label" for="view_type_instance">Instance</label>
-						</div>
-						<div class="form-check form-check-inline mr-4">
-							<input class="form-check-input" type="radio" name="view_type" value="log" id="view_type_log" <?=$filter_view_type === 'log' ? 'checked' : ''?>>
-							<label class="form-check-label" for="view_type_log">Log</label>
-						</div>
-						<div class="form-check form-check-inline ml-4">
-							<input class="form-check-input" type="radio" name="sort" value="desc" id="sort_desc" <?=$filter_sort === 'desc' ? 'checked' : ''?>>
-							<label class="form-check-label" for="sort_desc">Desc</label>
-						</div>
-						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="sort" value="asc" id="sort_asc" <?=$filter_sort === 'asc' ? 'checked' : ''?>>
-							<label class="form-check-label" for="sort_asc">Asc</label>
-						</div>
-						<button type="button" onclick="onFilterSubmit(this);" class="btn btn-primary" id="filter_submit">Filter</button>
 						
-					</form>
-					
+					</div>
 				</div>
+				<div class="card mb-4" style="width: 100%;">
+					<div class="card-body">
+						<div class="form-inline">
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="view_type" value="session" id="view_type_session" <?=$filter_view_type === 'session' ? 'checked' : ''?>>
+								<label class="form-check-label" for="view_type_session">Session</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="view_type" value="instance" id="view_type_instance" <?=$filter_view_type === 'instance' ? 'checked' : ''?>>
+								<label class="form-check-label" for="view_type_instance">Instance</label>
+							</div>
+							<div class="form-check form-check-inline mr-4">
+								<input class="form-check-input" type="radio" name="view_type" value="log" id="view_type_log" <?=$filter_view_type === 'log' ? 'checked' : ''?>>
+								<label class="form-check-label" for="view_type_log">Log</label>
+							</div>
+							<div class="form-check form-check-inline ml-4">
+								<input class="form-check-input" type="radio" name="sort" value="desc" id="sort_desc" <?=$filter_sort === 'desc' ? 'checked' : ''?>>
+								<label class="form-check-label" for="sort_desc">Desc</label>
+							</div>
+							<div class="form-check form-check-inline">
+								<input class="form-check-input" type="radio" name="sort" value="asc" id="sort_asc" <?=$filter_sort === 'asc' ? 'checked' : ''?>>
+								<label class="form-check-label" for="sort_asc">Asc</label>
+							</div>
+							<button type="submit" class="btn btn-success mr-2">Submit</button>
+							<a href="index.php" class="btn btn-primary">Clear</a>
+							
+						</div>
+						
+					</div>
+				</div>
+				<?php require_once $include_file_name; ?>
+				<?php if($pagination->getPagesCount() > 1) { ?>
+				<nav aria-label="Page navigation example">
+					<ul class="pagination mt-4">
+						<?php if($filter_page > 1) { ?>
+							<li class="page-item"><button class="page-link" onclick="setPrevPage();" type="button">Previous</button></li>
+						<?php } ?>
+						<?php for($p=1;$p<=$pagination->getPagesCount();$p++) { ?>
+							<li class="page-item"><button class="page-link <?=$p==$filter_page?'font-weight-bold':''?>" onclick="setPage(<?=$p?>);" type="button"><?=$p?></button></li>
+						<?php } ?>
+						<?php if($filter_page < $pagination->getPagesCount()) { ?>
+							<li class="page-item"><button class="page-link" onclick="setNextPage();" type="button">Next</button></li>
+						<?php } ?>
+					</ul>
+				</nav>
+				<?php } ?>
+				<!-- /.card -->
 			</div>
-			<div id="ajax_content">
-			</div>
-			
-			<!-- /.card -->
+			<!-- /.col-lg-9 -->
 		</div>
-		<!-- /.col-lg-9 -->
 	</div>
-</div>
+</form>
 <!-- /.container -->
 <!-- Footer -->
 <footer class="py-5 bg-dark">
@@ -107,21 +129,39 @@ require_once 'common.php';
 <script src="vendor/jquery/jquery.min.js"></script>
 <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 <script>
-function onFilterSubmit(e = null) {
-	if(e != null) $(e).prop('disabled', true);
-	
-	var jqxhr = $.get( "filter.php", {'test' : 1}, function(html) {
-		$('#ajax_content').html(html);
-	})
-	.fail(function() {
-		alert( "error" );
-	})
-	.always(function() {
-		if(e != null) $(e).prop('disabled', false);
-	});
+
+var current_page = parseInt($("input[name=page]").val());
+
+function setPrevPage() {
+	setPage(current_page-1);
 }
 
-onFilterSubmit();
+function setPage(p) {
+	$("input[name=page]").val(p).parent().submit();
+}
+
+function setNextPage() {
+	setPage(current_page+1);
+}
+
+$('.expand_text').click(function() {
+	if($(this).hasClass('fulltexted')) {
+		$(this).text($(this).attr('data-mintext')).removeClass('fulltexted');
+	} else {
+		$(this).attr('data-mintext', $(this).text()).text($(this).attr('data-fulltext')).addClass('fulltexted');
+	}
+});
+function showLogsOfInstance(instance_token) {
+    $('#view_type_log').prop('checked',true);
+    $('input[name=instance_token]').val(instance_token);
+    $('input[name=date_from], input[name=date_to]').val('');
+    $('form').submit();
+}
 </script>
+<style>
+.expand_text {
+	padding: 0;
+}
+</style>
 </body>
 </html>
