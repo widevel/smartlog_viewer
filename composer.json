@@ -1,0 +1,20 @@
+{
+    "name": "widevel/smartlog_viewer",
+    "type": "project",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "marco iosif constantinescu",
+            "email": "info@widevel.com"
+        }
+    ],
+    "minimum-stability": "stable",
+	"autoload": {
+        "psr-4": {
+			"Widevel\\SmartlogViewer\\": "src/"
+		}
+    },
+    "require": {
+		"mongodb/mongodb": "^1.8"
+	}
+}
