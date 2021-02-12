@@ -4,6 +4,14 @@ namespace Widevel\SmartlogViewer;
 
 class Filter {
 	const LIMIT_VALUES = [5, 10,20,50,100,200,500,1000];
+
+	const LEVEL_VALUES = [
+		-1 => 'All',
+		1 => 'ERROR',
+		2 => 'WARNING',
+		3 => 'DEBUG',
+		4 => 'INFO'
+	];
 	
 	const fields_defaults_values = [
 		'limit' => 5,
@@ -12,6 +20,7 @@ class Filter {
 		'view_type' => 'session',
 		'sort' => 'desc',
 		'page' => 1,
+		'level' => -1,
 	];
 
 	const fields_allowed_values = [
@@ -23,6 +32,7 @@ class Filter {
 	const fields_cast = [
 		'limit' => 'int',
 		'page' => 'int',
+		'level' => 'int',
 	];
 	
 	public static function getValue(string $field_name) {

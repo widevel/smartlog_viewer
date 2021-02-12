@@ -1,6 +1,7 @@
 <?php
 chdir('..');
 require_once 'common.php';
+Widevel\SmartlogViewer\Auth::requireAuth();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,25 +23,17 @@ require_once 'common.php';
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
 <div class="container">
-	<a class="navbar-brand" href="#">SmartLog Viewer
+	<a class="navbar-brand" href="index.php">SmartLog Viewer
 	</a>
 	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
 	<span class="navbar-toggler-icon"></span>
 	</button>
-	<div class="collapse navbar-collapse" id="navbarResponsive">
-		<ul class="navbar-nav ml-auto">
-			<li class="nav-item">
-			<a class="nav-link" href="#">Logout</a>
-			</li>
-		</ul>
-	</div>
+	
 </div>
 </nav>
 <!-- Page Content -->
 <form method="GET">
 <input type="hidden" name="page" value="<?=$filter_page?>" />
-<input type="hidden" name="session_token" value="<?=$filter_session_token?>" />
-<input type="hidden" name="instance_token" value="<?=$filter_instance_token?>" />
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12 m-4">
@@ -48,19 +41,32 @@ require_once 'common.php';
 				<div class="card mb-4" style="width: 100%;">
 					<div class="card-body">
 						<div class="form-inline">
-							<select class="form-control mr-4" name="limit">
-								<?php foreach(Widevel\SmartlogViewer\Filter::LIMIT_VALUES as $limit) { ?>
-								<option <?=$limit === $filter_limit ? 'selected' : ''?>><?=$limit?></option>
-								<?php } ?>
-							</select>
 							<div class="form-group mr-4">
 								<input type="datetime-local" class="form-control" name="date_from" value="<?=$filter_date_from?>">
 							</div>
+							<i class="fas fa-trash-alt mr-4" onclick="$('input[name=date_from]').val('');"></i>
 							<div class="form-group mr-4">
 								<input type="datetime-local" class="form-control" name="date_to" value="<?=$filter_date_to?>">
 							</div>
+							<i class="fas fa-trash-alt" onclick="$('input[name=date_to]').val('');"></i>
 						</div>
 						
+					</div>
+				</div>
+				<div class="card mb-4" style="width: 100%;">
+					<div class="card-body">
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label>Instance</label>
+							<input type="text" name="instance_token" class="form-control" value="<?=$filter_instance_token?>">
+							<i class="fas fa-trash-alt" onclick="$('input[name=instance_token]').val('');"></i>
+						</div>
+						<div class="form-group col-md-6">
+							<label>Session</label>
+							<input type="text" name="session_token" class="form-control" value="<?=$filter_session_token?>">
+							<i class="fas fa-trash-alt" onclick="$('input[name=session_token]').val('');"></i>
+						</div>
+					</div>
 					</div>
 				</div>
 				<div class="card mb-4" style="width: 100%;">
@@ -86,17 +92,29 @@ require_once 'common.php';
 								<input class="form-check-input" type="radio" name="sort" value="asc" id="sort_asc" <?=$filter_sort === 'asc' ? 'checked' : ''?>>
 								<label class="form-check-label" for="sort_asc">Asc</label>
 							</div>
+							<select class="form-control mr-4" name="limit">
+								<?php foreach(Widevel\SmartlogViewer\Filter::LIMIT_VALUES as $limit) { ?>
+								<option <?=$limit === $filter_limit ? 'selected' : ''?>><?=$limit?></option>
+								<?php } ?>
+							</select>
+							<?php if($filter_view_type === 'log') { ?>
+							<select class="form-control mr-4" name="level">
+								<?php foreach(Widevel\SmartlogViewer\Filter::LEVEL_VALUES as $level => $label) { ?>
+								<option <?=$level === $filter_level ? 'selected' : ''?> value="<?=$level?>"><?=$label?></option>
+								<?php } ?>
+							</select>
+							<?php } ?>
 							<button type="submit" class="btn btn-success mr-2">Submit</button>
-							<a href="index.php" class="btn btn-primary">Clear</a>
 							
 						</div>
 						
 					</div>
 				</div>
 				<?php require_once $include_file_name; ?>
+				<h6><?=$count?> records found</h6>
 				<?php if($pagination->getPagesCount() > 1) { ?>
 				<nav aria-label="Page navigation example">
-					<ul class="pagination mt-4">
+					<ul class="pagination mt-4 flex-wrap">
 						<?php if($filter_page > 1) { ?>
 							<li class="page-item"><button class="page-link" onclick="setPrevPage();" type="button">Previous</button></li>
 						<?php } ?>
@@ -157,6 +175,7 @@ function showLogsOfInstance(instance_token) {
     $('input[name=date_from], input[name=date_to]').val('');
     $('form').submit();
 }
+
 </script>
 <style>
 .expand_text {

@@ -12,7 +12,7 @@ class Pagination {
 	}
 
 	public function setCount(int $count) {
-		$this->pages = (int) $count / $this->limit;
+		$this->pages = ceil($count / $this->limit);
 	}
 
 	public function getMongoSkip() :int { return $this->skip; }

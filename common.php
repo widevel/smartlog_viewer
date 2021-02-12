@@ -8,6 +8,7 @@ $filter_date_to = Widevel\SmartlogViewer\Filter::getValue('date_to');
 $filter_view_type = Widevel\SmartlogViewer\Filter::getValue('view_type');
 $filter_sort = Widevel\SmartlogViewer\Filter::getValue('sort');
 $filter_page = Widevel\SmartlogViewer\Filter::getValue('page');
+$filter_level = Widevel\SmartlogViewer\Filter::getValue('level');
 $filter_session_token = Widevel\SmartlogViewer\Filter::getValue('session_token');
 $filter_instance_token = Widevel\SmartlogViewer\Filter::getValue('instance_token');
 
@@ -28,6 +29,8 @@ if($filter_session_token) {
 if($filter_instance_token) {
 	$where['instance_token'] = $filter_instance_token;
 }
+
+if($filter_level > -1 && $filter_view_type === 'log') $where['level'] = $filter_level;
 
 if($filter_date_from) {
 	$where['date'] = ['$gte' => new \MongoDB\BSON\UTCDateTime(strtotime($filter_date_from) * 1000)];
